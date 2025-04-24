@@ -4,17 +4,17 @@
  */
 
 // 導入模組
-import { UIManager } from './modules/UIManager.js';
-import { CardManager } from './modules/CardManager.js';
-import { BattleManager } from './modules/BattleManager.js';
-import { PlayerManager } from './modules/PlayerManager.js';
-import { EnemyManager } from './modules/EnemyManager.js';
-import { EffectManager } from './modules/EffectManager.js';
-import { SoundManager } from './modules/SoundManager.js';
-import { AnimationManager } from './modules/AnimationManager.js';
-import { SaveManager } from './modules/SaveManager.js';
-import { AchievementManager } from './modules/AchievementManager.js';
-import { ResourceManager } from './modules/ResourceManager.js';
+import { UIManager } from './js/modules/UIManager.js';
+import { CardManager } from './js/modules/CardManager.js';
+import { BattleManager } from './js/modules/BattleManager.js';
+import { PlayerManager } from './js/modules/PlayerManager.js';
+import { EnemyManager } from './js/modules/EnemyManager.js';
+import { EffectManager } from './js/modules/EffectManager.js';
+import { SoundManager } from './js/modules/SoundManager.js';
+import { AnimationManager } from './js/modules/AnimationManager.js';
+import { SaveManager } from './js/modules/SaveManager.js';
+import { AchievementManager } from './js/modules/AchievementManager.js';
+import { ResourceManager } from './js/modules/ResourceManager.js';
 
 // 遊戲狀態
 const GameState = {
