@@ -605,3 +605,47 @@ export class UIManager {
     }, duration);
   }
 }
+
+/**
+ * 顯示成就解鎖通知
+ * @param {Object} achievement - 解鎖的成就對象
+ */
+showAchievementUnlocked(achievement) {
+  if (!achievement) return;
+  
+  // 創建成就通知元素
+  const achievementElement = document.createElement('div');
+  achievementElement.className = 'achievement-notification';
+  
+  // 設置成就通知內容
+  achievementElement.innerHTML = `
+    <div class="achievement-icon">🏆</div>
+    <div class="achievement-info">
+      <h3>成就解鎖！</h3>
+      <p>${achievement.name}</p>
+      <p class="achievement-description">${achievement.description}</p>
+    </div>
+  `;
+  
+  // 添加到頁面
+  document.body.appendChild(achievementElement);
+  
+  // 添加動畫類
+  setTimeout(() => {
+    achievementElement.classList.add('show');
+  }, 100);
+  
+  // 播放成就解鎖音效
+  this.gameController.soundManager.play('achievement-unlocked');
+  
+  // 自動移除通知
+  setTimeout(() => {
+    achievementElement.classList.remove('show');
+    setTimeout(() => {
+      document.body.removeChild(achievementElement);
+    }, 500);
+  }, 5000);
+  
+  // 同時顯示Toast提示
+  this.showToast(`成就解鎖：${achievement.name}`);
+}
