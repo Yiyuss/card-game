@@ -416,3 +416,46 @@ export class AnimationManager {
     }, 50);
   }
 }
+
+/**
+ * 播放攻擊動畫
+ * @param {number} damage - 造成的傷害
+ */
+playAttackAnimation(damage) {
+  console.log(`播放攻擊動畫，傷害: ${damage}`);
+  
+  // 獲取敵人元素
+  const enemyElement = document.querySelector('#enemy-image');
+  if (!enemyElement) return;
+  
+  // 創建傷害數字元素
+  const damageElement = document.createElement('div');
+  damageElement.className = 'damage-number';
+  damageElement.textContent = `-${damage}`;
+  damageElement.style.position = 'absolute';
+  damageElement.style.color = '#ff4444';
+  damageElement.style.fontSize = '2rem';
+  damageElement.style.fontWeight = 'bold';
+  damageElement.style.textShadow = '0 0 5px #000';
+  damageElement.style.zIndex = '100';
+  
+  // 計算位置（敵人中心位置）
+  const rect = enemyElement.getBoundingClientRect();
+  damageElement.style.left = `${rect.left + rect.width / 2}px`;
+  damageElement.style.top = `${rect.top + rect.height / 2}px`;
+  
+  // 添加到文檔
+  document.body.appendChild(damageElement);
+  
+  // 添加震動效果
+  enemyElement.classList.add('shake');
+  
+  // 播放攻擊音效
+  this.gameController.soundManager.play('attack');
+  
+  // 移除動畫和元素
+  setTimeout(() => {
+    enemyElement.classList.remove('shake');
+    damageElement.remove();
+  }, 1000);
+}
