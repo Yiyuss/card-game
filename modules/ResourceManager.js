@@ -159,10 +159,10 @@ export class ResourceManager {
     console.log('加載圖片資源...');
     
     const imagesToLoad = [
-      { name: 'main_bg', path: './assets/images/main_bg.jpg' },
-      { name: 'battle_bg', path: './assets/images/battle_bg.jpg' },
-      { name: 'card_back', path: './assets/images/card_back.png' },
-      { name: 'player_avatar', path: './assets/images/player_avatar.png' }
+      { name: 'main_bg', path: '.src/assets/images/main_bg.jpg' },
+      { name: 'battle_bg', path: '.src/assets/images/battle_bg.jpg' },
+      { name: 'card_back', path: '.src/assets/images/card_back.png' },
+      { name: 'player_avatar', path: '.src/assets/images/player_avatar.png' }
     ];
     
     let loadedCount = 0;
