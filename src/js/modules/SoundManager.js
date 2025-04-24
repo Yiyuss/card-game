@@ -54,6 +54,7 @@ export class SoundManager {
       this._loadSound('defeat', 'assets/sounds/defeat.mp3');
       this._loadSound('level-up', 'assets/sounds/level-up.mp3');
       this._loadSound('button-click', 'assets/sounds/button-click.mp3');
+      this._loadSound('achievement-unlocked', '/assets/sounds/achievement-unlocked.mp3');
       
       // 預加載效果音效
       this._loadSound('poison', 'assets/sounds/poison.mp3');
