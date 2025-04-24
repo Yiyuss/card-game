@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>卡牌遊戲</title>
+  <link rel="stylesheet" href="src/css/style.css">
+</head>
+<body>
+  <div id="game-container">
+    <!-- 主菜單屏幕 -->
+    <div id="main-menu" class="screen">
+      <h1>卡牌遊戲</h1>
+      <div class="menu-buttons">
+        <button id="new-game-btn">新遊戲</button>
+        <button id="load-game-btn">載入遊戲</button>
+        <button id="settings-btn">設置</button>
+      </div>
+    </div>
+
+    <!-- 關卡選擇屏幕 -->
+    <div id="level-select" class="screen hidden">
+      <h2>選擇關卡</h2>
+      <div id="levels-container" class="levels-grid"></div>
+      <button id="back-to-menu-btn" class="back-btn">返回主菜單</button>
+    </div>
+
+    <!-- 戰鬥屏幕 -->
+    <div id="battle" class="screen hidden">
+      <div id="enemy-area">
+        <div id="enemy-info">
+          <div id="enemy-name"></div>
+          <div id="enemy-health-bar" class="health-bar">
+            <div id="enemy-health-fill" class="health-fill"></div>
+            <span id="enemy-health-text"></span>
+          </div>
+        </div>
+        <div id="enemy-image"></div>
+        <div id="enemy-effects" class="effects-container"></div>
+      </div>
+
+      <div id="battle-area">
+        <div id="player-effects" class="effects-container"></div>
+        <div id="cards-area">
+          <div id="hand-container" class="cards-container"></div>
+        </div>
+        <div id="battle-controls">
+          <div id="player-mana">
+            <span id="current-mana"></span>/<span id="max-mana"></span>
+          </div>
+          <button id="end-turn-btn">結束回合</button>
+        </div>
+      </div>
+
+      <div id="player-area">
+        <div id="player-info">
+          <div id="player-name">玩家</div>
+          <div id="player-health-bar" class="health-bar">
+            <div id="player-health-fill" class="health-fill"></div>
+            <span id="player-health-text"></span>
+          </div>
+        </div>
+        <div id="deck-info">
+          <div id="deck-count">牌庫: <span id="deck-count-value"></span></div>
+          <div id="discard-count">棄牌堆: <span id="discard-count-value"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 遊戲結束屏幕 -->
+    <div id="game-over" class="screen hidden">
+      <h2 id="result-text"></h2>
+      <div id="rewards-container" class="hidden">
+        <h3>獎勵</h3>
+        <div id="rewards-list"></div>
+      </div>
+      <div class="menu-buttons">
+        <button id="continue-btn">繼續</button>
+        <button id="restart-btn">重新開始</button>
+        <button id="game-over-menu-btn">返回主菜單</button>
+      </div>
+    </div>
+
+    <!-- 設置屏幕 -->
+    <div id="settings-screen" class="screen hidden">
+      <h2>設置</h2>
+      <div class="settings-container">
+        <div class="setting-item">
+          <label for="music-volume">音樂音量</label>
+          <input type="range" id="music-volume" min="0" max="1" step="0.1" value="0.5">
+        </div>
+        <div class="setting-item">
+          <label for="sound-volume">音效音量</label>
+          <input type="range" id="sound-volume" min="0" max="1" step="0.1" value="0.5">
+        </div>
+        <div class="setting-item">
+          <label for="difficulty">難度</label>
+          <select id="difficulty">
+            <option value="easy">簡單</option>
+            <option value="normal" selected>普通</option>
+            <option value="hard">困難</option>
+          </select>
+        </div>
+      </div>
+      <button id="settings-back-btn" class="back-btn">返回</button>
+    </div>
+
+    <!-- 提示框 -->
+    <div id="toast" class="hidden"></div>
+  </div>
+
+  <!-- 使用type="module"以支持ES模塊導入 -->
+  <script type="module" src="src/js/GameController.js"></script>
+</body>
+</html>
