@@ -57,6 +57,8 @@ export class UIManager {
     // 顯示指定屏幕
     if (this.screens[screenName]) {
       this.screens[screenName].classList.remove('hidden');
+      }
+    }
       
       // 根據屏幕類型執行特定初始化
       switch (screenName) {
