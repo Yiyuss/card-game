@@ -389,73 +389,6 @@ button:active {
   margin-bottom: 0.5rem;
 }
 
-/* 通知樣式 */
-.toast {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 0.8rem 1.5rem;
-  border-radius: 5px;
-  z-index: 1000;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.toast.show {
-  opacity: 1;
-}
-
-/* 動畫樣式 */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
-  20%, 40%, 60%, 80% { transform: translateX(10px); }
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-
-.fade-in {
-  animation: fadeIn 0.5s ease forwards;
-}
-
-.fade-out {
-  animation: fadeOut 0.5s ease forwards;
-}
-
-.bounce {
-  animation: bounce 0.5s ease infinite;
-}
-
-.shake {
-  animation: shake 0.5s ease;
-}
-
-.pulse {
-  animation: pulse 0.5s ease infinite;
-}
-
 /* 攻擊動畫相關樣式 */
 .damage-number {
   animation: float-up 1s ease-out forwards;
@@ -516,78 +449,116 @@ button:active {
   }
 }
 
-/* Toast提示樣式 */
-.toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 12px 24px;
-  border-radius: 5px;
-  font-size: 1rem;
-  z-index: 1000;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
+/* 動畫樣式 */
+@keyframes bounce { 
+  0%, 100% { transform: translateY(0); } 
+  50% { transform: translateY(-20px); } 
 }
 
-/* 成就通知樣式 */
-.achievement-notification {
-  position: fixed;
-  top: 30px;
-  right: -350px;
-  width: 320px;
-  background-color: rgba(74, 74, 233, 0.9);
-  border-radius: 10px;
-  padding: 15px;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-  transition: right 0.5s ease;
-  z-index: 1000;
+@keyframes shake { 
+  0%, 100% { transform: translateX(0); } 
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); } 
+  20%, 40%, 60%, 80% { transform: translateX(10px); } 
 }
 
-.achievement-notification.show {
-  right: 30px;
+@keyframes pulse { 
+  0% { transform: scale(1); } 
+  50% { transform: scale(1.1); } 
+  100% { transform: scale(1); } 
 }
 
-.achievement-icon {
-  font-size: 2.5rem;
-  margin-right: 15px;
-  color: gold;
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+.fade-in { 
+  animation: fadeIn 0.5s ease forwards; 
 }
 
-.achievement-info {
-  flex: 1;
+.fade-out { 
+  animation: fadeOut 0.5s ease forwards; 
 }
 
-.achievement-info h3 {
-  margin: 0 0 5px 0;
-  font-size: 1.2rem;
-  color: white;
+.bounce { 
+  animation: bounce 0.5s ease infinite; 
 }
 
-.achievement-info p {
-  margin: 0;
-  font-size: 1rem;
-  color: white;
+.shake { 
+  animation: shake 0.5s ease; 
 }
 
-.achievement-description {
-  font-size: 0.8rem !important;
-  opacity: 0.8;
-  margin-top: 5px !important;
+.pulse { 
+  animation: pulse 0.5s ease infinite; 
 }
 
-/* 動畫 */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* Toast提示樣式 */ 
+.toast { 
+  position: fixed; 
+  bottom: 30px; 
+  left: 50%; 
+  transform: translateX(-50%); 
+  background-color: rgba(0, 0, 0, 0.8); 
+  color: white; 
+  padding: 12px 24px; 
+  border-radius: 5px; 
+  font-size: 1rem; 
+  z-index: 1000; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+  animation: fadeIn 0.3s, fadeOut 0.3s 2.7s; 
 }
 
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+/* 成就通知樣式 */ 
+.achievement-notification { 
+  position: fixed; 
+  top: 30px; 
+  right: -350px; 
+  width: 320px; 
+  background-color: rgba(74, 74, 233, 0.9); 
+  border-radius: 10px; 
+  padding: 15px; 
+  display: flex; 
+  align-items: center; 
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); 
+  transition: right 0.5s ease; 
+  z-index: 1000; 
+}
+
+.achievement-notification.show { 
+  right: 30px; 
+}
+
+.achievement-icon { 
+  font-size: 2.5rem; 
+  margin-right: 15px; 
+  color: gold; 
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.7); 
+}
+
+.achievement-info { 
+  flex: 1; 
+}
+
+.achievement-info h3 { 
+  margin: 0 0 5px 0; 
+  font-size: 1.2rem; 
+  color: white; 
+}
+
+.achievement-info p { 
+  margin: 0; 
+  font-size: 1rem; 
+  color: white; 
+}
+
+.achievement-description { 
+  font-size: 0.8rem !important; 
+  opacity: 0.8; 
+  margin-top: 5px !important; 
+}
+
+/* 動畫 */ 
+@keyframes fadeIn { 
+  from { opacity: 0; } 
+  to { opacity: 1; } 
+}
+
+@keyframes fadeOut { 
+  from { opacity: 1; } 
+  to { opacity: 0; } 
 }
