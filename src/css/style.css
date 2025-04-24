@@ -53,10 +53,13 @@ body {
   top: 0;
   left: 0;
   transition: opacity 0.5s ease;
+  z-index: 1; /* 確保所有屏幕都有正確的層級 */
 }
 
 .hidden {
-  display: none;
+  display: none !important; /* 強制隱藏 */
+  opacity: 0;
+  z-index: -1;
 }
 
 /* 主菜單樣式 */
@@ -64,6 +67,7 @@ body {
   background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../assets/images/main_bg.jpg');
   background-size: cover;
   background-position: center;
+  z-index: 10; /* 確保主菜單在最上層 */
 }
 
 #main-menu h1 {
