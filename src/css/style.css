@@ -64,7 +64,7 @@ body {
 
 /* 主菜單樣式 */
 #main-menu {
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../../src/assets/images/main_bg.jpg');
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../src/assets/images/main_bg.jpg');
   background-size: cover;
   background-position: center;
   z-index: 10; /* 確保主菜單在最上層 */
