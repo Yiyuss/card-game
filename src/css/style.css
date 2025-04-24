@@ -515,3 +515,44 @@ button:active {
     font-size: 0.7rem;
   }
 }
+
+/* 成就通知樣式 */
+.achievement-notification {
+  position: fixed;
+  top: 20px;
+  right: -350px;
+  width: 300px;
+  background-color: rgba(74, 74, 233, 0.9);
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  transition: right 0.5s ease;
+}
+
+.achievement-notification.show {
+  right: 20px;
+}
+
+.achievement-icon {
+  font-size: 2rem;
+  margin-right: 15px;
+}
+
+.achievement-info h3 {
+  margin: 0 0 5px 0;
+  font-size: 1.2rem;
+}
+
+.achievement-info p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.achievement-description {
+  font-size: 0.8rem !important;
+  color: #ddd;
+  margin-top: 5px !important;
+}
