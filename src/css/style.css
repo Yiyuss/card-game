@@ -1,407 +1,479 @@
 /* 全局樣式 */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: 'Arial', sans-serif;
-    background-color: #1a1a2e;
-    color: #fff;
-    overflow: hidden;
-  }
-  
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #1a1a2e;
+  color: #fff;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#game-container {
+  width: 100%;
+  height: 100%;
+  max-width: calc(100vh * 16 / 9);
+  max-height: calc(100vw * 9 / 16);
+  position: relative;
+  background-color: #0f3460;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+@media (min-aspect-ratio: 16/9) {
   #game-container {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-  }
-  
-  .screen {
-    width: 100%;
+    width: auto;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    top: 0;
-    left: 0;
-    transition: opacity 0.5s ease;
   }
-  
-  .hidden {
-    display: none;
+}
+
+@media (max-aspect-ratio: 16/9) {
+  #game-container {
+    width: 100%;
+    height: auto;
   }
-  
-  /* 主菜單樣式 */
-  #main-menu {
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../assets/images/main_bg.jpg');
-    background-size: cover;
-    background-position: center;
-  }
-  
+}
+
+.screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 0.5s ease;
+}
+
+.hidden {
+  display: none;
+}
+
+/* 主菜單樣式 */
+#main-menu {
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../assets/images/main_bg.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+#main-menu h1 {
+  font-size: 4rem;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 10px rgba(0, 0, 255, 0.7);
+}
+
+.menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+button {
+  padding: 0.8rem 2rem;
+  font-size: 1.2rem;
+  background-color: #4a4ae9;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #2a2a9a;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+button:active {
+  transform: translateY(-1px);
+}
+
+.back-btn {
+  margin-top: 2rem;
+  background-color: #6c757d;
+}
+
+.back-btn:hover {
+  background-color: #5a6268;
+}
+
+/* 關卡選擇樣式 */
+#level-select {
+  background-color: #16213e;
+  padding: 2rem;
+}
+
+#level-select h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.levels-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.level-card {
+  background-color: #0f3460;
+  border-radius: 10px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.level-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(74, 74, 233, 0.5);
+}
+
+.level-card.locked {
+  background-color: #444;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.level-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.level-card p {
+  font-size: 0.9rem;
+  color: #ddd;
+}
+
+/* 戰鬥屏幕樣式 */
+#battle {
+  background-color: #0f3460;
+  display: grid;
+  grid-template-rows: 1fr 2fr 1fr;
+  height: 100%;
+}
+
+#enemy-area, #player-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+#battle-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  position: relative;
+}
+
+.health-bar {
+  width: 200px;
+  height: 20px;
+  background-color: #444;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  margin-top: 0.5rem;
+}
+
+.health-fill {
+  height: 100%;
+  background-color: #e94a4a;
+  transition: width 0.3s ease;
+}
+
+.health-bar span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.effects-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.effect-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  position: relative;
+}
+
+.effect-icon.poison {
+  background-color: #4ae94a;
+}
+
+.effect-icon.weakness {
+  background-color: #e9e94a;
+}
+
+.effect-icon.burn {
+  background-color: #e9944a;
+}
+
+.effect-icon.shield {
+  background-color: #4a94e9;
+}
+
+.effect-duration {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 18px;
+  height: 18px;
+  background-color: #333;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.7rem;
+}
+
+.cards-container {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.card {
+  width: 120px;
+  height: 180px;
+  background-color: #4a4ae9;
+  border-radius: 10px;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.card:hover {
+  transform: translateY(-20px);
+}
+
+.card.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.card-name {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.card-cost {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 25px;
+  height: 25px;
+  background-color: #e9944a;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+.card-description {
+  font-size: 0.8rem;
+  margin-top: auto;
+  text-align: center;
+}
+
+.card-type {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  font-size: 0.7rem;
+  color: #ddd;
+}
+
+.mana-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mana-icon {
+  width: 20px;
+  height: 20px;
+  background-color: #4a94e9;
+  border-radius: 50%;
+}
+
+.end-turn-btn {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #e94a4a;
+}
+
+.end-turn-btn:hover {
+  background-color: #c53030;
+}
+
+/* 遊戲結束屏幕樣式 */
+#game-over {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+#game-over h2 {
+  font-size: 3rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.victory {
+  color: #4ae94a;
+}
+
+.defeat {
+  color: #e94a4a;
+}
+
+.rewards-container {
+  background-color: #0f3460;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  min-width: 300px;
+}
+
+.rewards-container h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.reward-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+/* 通知樣式 */
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 5px;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+/* 動畫樣式 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.5s ease forwards;
+}
+
+.bounce {
+  animation: bounce 0.5s ease infinite;
+}
+
+.shake {
+  animation: shake 0.5s ease;
+}
+
+.pulse {
+  animation: pulse 0.5s ease infinite;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
   #main-menu h1 {
-    font-size: 4rem;
-    margin-bottom: 2rem;
-    text-shadow: 0 0 10px rgba(0, 0, 255, 0.7);
-  }
-  
-  .menu-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  button {
-    padding: 0.8rem 2rem;
-    font-size: 1.2rem;
-    background-color: #4a4ae9;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  button:hover {
-    background-color: #2a2a9a;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  }
-  
-  button:active {
-    transform: translateY(-1px);
-  }
-  
-  .back-btn {
-    margin-top: 2rem;
-    background-color: #6c757d;
-  }
-  
-  .back-btn:hover {
-    background-color: #5a6268;
-  }
-  
-  /* 關卡選擇樣式 */
-  #level-select {
-    background-color: #16213e;
-    padding: 2rem;
-  }
-  
-  #level-select h2 {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
+    font-size: 3rem;
   }
   
   .levels-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-  
-  .level-card {
-    background-color: #0f3460;
-    border-radius: 10px;
-    padding: 1.5rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .level-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(74, 74, 233, 0.5);
-  }
-  
-  .level-card.locked {
-    background-color: #444;
-    cursor: not-allowed;
-    opacity: 0.7;
-  }
-  
-  .level-card h3 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .level-card p {
-    font-size: 0.9rem;
-    color: #ddd;
-  }
-  
-  /* 戰鬥屏幕樣式 */
-  #battle {
-    background-color: #0f3460;
-    display: grid;
-    grid-template-rows: 1fr 2fr 1fr;
-    height: 100%;
-  }
-  
-  #enemy-area, #player-area {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    background-color: rgba(0, 0, 0, 0.3);
-  }
-  
-  #battle-area {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 1rem;
-    position: relative;
-  }
-  
-  .health-bar {
-    width: 200px;
-    height: 20px;
-    background-color: #444;
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
-    margin-top: 0.5rem;
-  }
-  
-  .health-fill {
-    height: 100%;
-    background-color: #e94a4a;
-    transition: width 0.3s ease;
-  }
-  
-  .health-bar span {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 0.8rem;
-    font-weight: bold;
-  }
-  
-  .effects-container {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-  }
-  
-  .effect-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 0.8rem;
-    font-weight: bold;
-    position: relative;
-  }
-  
-  .effect-icon.poison {
-    background-color: #4ae94a;
-  }
-  
-  .effect-icon.weakness {
-    background-color: #e9e94a;
-  }
-  
-  .effect-icon.burn {
-    background-color: #e9944a;
-  }
-  
-  .effect-icon.shield {
-    background-color: #4a94e9;
-  }
-  
-  .effect-duration {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    width: 18px;
-    height: 18px;
-    background-color: #333;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 0.7rem;
+    grid-template-columns: 1fr;
   }
   
   .cards-container {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 1rem;
+    flex-wrap: wrap;
   }
   
   .card {
-    width: 120px;
-    height: 180px;
-    background-color: #4a4ae9;
-    border-radius: 10px;
-    padding: 0.8rem;
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  }
-  
-  .card:hover {
-    transform: translateY(-20px);
-  }
-  
-  .card.disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+    width: 100px;
+    height: 150px;
   }
   
   .card-name {
-    font-size: 1rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    text-align: center;
-  }
-  
-  .card-cost {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    width: 25px;
-    height: 25px;
-    background-color: #e9944a;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-  }
-  
-  .card-description {
-    font-size: 0.8rem;
-    margin-top: auto;
-    text-align: center;
-  }
-  
-  .card-type {
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    font-size: 0.7rem;
-    font-style: italic;
-  }
-  
-  #battle-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 5px;
-    margin-top: 1rem;
-  }
-  
-  #player-mana {
-    font-size: 1.2rem;
-    color: #4ae9e9;
-    font-weight: bold;
-  }
-  
-  #deck-info {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
     font-size: 0.9rem;
   }
   
-  /* 遊戲結束屏幕樣式 */
-  #game-over {
-    background-color: rgba(0, 0, 0, 0.8);
+  .card-description {
+    font-size: 0.7rem;
   }
-  
-  #game-over h2 {
-    font-size: 3rem;
-    margin-bottom: 2rem;
-    text-align: center;
-  }
-  
-  #rewards-container {
-    background-color: #16213e;
-    padding: 1.5rem;
-    border-radius: 10px;
-    margin-bottom: 2rem;
-    min-width: 300px;
-  }
-  
-  #rewards-container h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-  
-  .reward-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-    font-size: 1.1rem;
-  }
-  
-  /* 設置屏幕樣式 */
-  #settings-screen {
-    background-color: #16213e;
-  }
-  
-  #settings-screen h2 {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-  }
-  
-  .settings-container {
-    background-color: #0f3460;
-    padding: 2rem;
-    border-radius: 10px;
-    width: 80%;
-    max-width: 500px;
-  }
-  
-  .setting-item {
-    margin-bottom: 1.5rem;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .setting-item label {
-    margin-bottom: 0.5rem;
-    font-size: 1.2rem;
-  }
-  
-  .setting-item input, .setting-item select {
-    padding: 0.5rem;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: none;
-  }
-  
-  /* 提示框樣式 */
-  #toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 5px;
-    font-size: 1.1rem;
-    z-index: 1000;
-    transition: opacity 0.3s ease;
-  }
+}
