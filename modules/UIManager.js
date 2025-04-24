@@ -51,34 +51,32 @@ export class UIManager {
    * 顯示指定屏幕
    */
   showScreen(screenName) {
-    // 隱藏所有屏幕
-    this._hideAllScreens();
-    
-    // 顯示指定屏幕
-    if (this.screens[screenName]) {
-      this.screens[screenName].classList.remove('hidden');
-      }
+  // 隱藏所有屏幕
+  this._hideAllScreens();
+
+  // 顯示指定屏幕
+  if (this.screens[screenName]) {
+    this.screens[screenName].classList.remove('hidden');
+
+    // 根據屏幕類型執行特定初始化
+    switch (screenName) {
+      case 'mainMenu':
+        // 主菜單不需要特殊初始化
+        break;
+      case 'levelSelect':
+        this._initLevelSelect();
+        break;
+      case 'battle':
+        this.updateBattleUI();
+        break;
+      case 'gameOver':
+        this._updateGameOverScreen();
+        break;
     }
-      
-      // 根據屏幕類型執行特定初始化
-      switch (screenName) {
-        case 'mainMenu':
-          // 主菜單不需要特殊初始化
-          break;
-        case 'levelSelect':
-          this._initLevelSelect();
-          break;
-        case 'battle':
-          this.updateBattleUI();
-          break;
-        case 'gameOver':
-          this._updateGameOverScreen();
-          break;
-      }
-    } else {
-      console.error(`屏幕 ${screenName} 不存在`);
-    }
+  } else {
+    console.error(`屏幕 ${screenName} 不存在`);
   }
+}
   
   /**
    * 隱藏所有屏幕
