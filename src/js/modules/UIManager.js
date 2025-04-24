@@ -3,707 +3,605 @@
  * 負責處理所有與用戶界面相關的操作
  */
 export class UIManager {
-    constructor(gameController) {
-      this.gameController = gameController;
-      this.screens = {};
-      this.activeScreen = null;
-      this.toastTimeout = null;
-      this.modalTimeout = null;
-    }
+  constructor(gameController) {
+    this.gameController = gameController;
+    this.screens = {};
+    this.toastTimeout = null;
+  }
   
-    /**
-     * 初始化UI管理器
-     */
-    init() {
-      console.log('初始化UI管理器...');
-      
-      // 創建主要屏幕
-      this._createMainMenu();
-      this._createLevelSelect();
-      this._createBattleScreen();
-      this._createGameOverScreen();
-      
-      // 創建通用UI元素
-      this._createToast();
-      this._createModal();
-      
-      console.log('UI管理器初始化完成');
+  /**
+   * 初始化UI
+   */
+  init() {
+    console.log('初始化UI...');
+    
+    // 獲取所有屏幕元素
+    this.screens = {
+      mainMenu: document.getElementById('main-menu'),
+      levelSelect: document.getElementById('level-select'),
+      battle: document.getElementById('battle'),
+      gameOver: document.getElementById('game-over')
+    };
+    
+    // 確保所有屏幕都存在
+    if (!this.screens.mainMenu || !this.screens.levelSelect || !this.screens.battle || !this.screens.gameOver) {
+      console.error('無法找到所有必要的屏幕元素');
+      return;
     }
     
-    /**
-     * 顯示指定屏幕
-     */
-    showScreen(screenName) {
-      if (!this.screens[screenName]) {
-        console.error(`屏幕 ${screenName} 不存在`);
-        return;
-      }
-      
-      // 隱藏當前屏幕
-      if (this.activeScreen) {
-        this.activeScreen.style.display = 'none';
-      }
-      
-      // 顯示新屏幕
-      this.screens[screenName].style.display = 'block';
-      this.activeScreen = this.screens[screenName];
+    // 初始化主菜單
+    this._initMainMenu();
+    
+    // 初始化關卡選擇
+    this._initLevelSelect();
+    
+    // 初始化戰鬥屏幕
+    this._initBattleScreen();
+    
+    // 初始化遊戲結束屏幕
+    this._initGameOverScreen();
+    
+    // 隱藏所有屏幕
+    this._hideAllScreens();
+    
+    console.log('UI初始化完成');
+  }
+  
+  /**
+   * 顯示指定屏幕
+   */
+  showScreen(screenName) {
+    // 隱藏所有屏幕
+    this._hideAllScreens();
+    
+    // 顯示指定屏幕
+    if (this.screens[screenName]) {
+      this.screens[screenName].classList.remove('hidden');
       
       // 根據屏幕類型執行特定初始化
       switch (screenName) {
         case 'mainMenu':
-          this._initMainMenu();
+          // 主菜單不需要特殊初始化
           break;
         case 'levelSelect':
           this._initLevelSelect();
           break;
         case 'battle':
-          this._initBattleScreen();
+          this.updateBattleUI();
           break;
         case 'gameOver':
-          this._initGameOverScreen();
+          this._updateGameOverScreen();
           break;
       }
-      
-      console.log(`顯示屏幕: ${screenName}`);
+    } else {
+      console.error(`屏幕 ${screenName} 不存在`);
     }
-    
-    /**
-     * 更新戰鬥UI
-     */
-    updateBattleUI() {
-      if (!this.screens.battle) return;
-      
-      const { player, enemy, cards, battle } = this.gameController.state;
-      
-      // 更新玩家信息
-      const playerHealthEl = document.getElementById('player-health');
-      const playerManaEl = document.getElementById('player-mana');
-      if (playerHealthEl) playerHealthEl.textContent = `生命: ${player.health}/${player.maxHealth}`;
-      if (playerManaEl) playerManaEl.textContent = `魔力: ${player.mana}/${player.maxMana}`;
-      
-      // 更新敵人信息
-      const enemyHealthEl = document.getElementById('enemy-health');
-      const enemyNameEl = document.getElementById('enemy-name');
-      if (enemyHealthEl) enemyHealthEl.textContent = `生命: ${enemy.health}/${enemy.maxHealth}`;
-      if (enemyNameEl) enemyNameEl.textContent = enemy.name;
-      
-      // 更新手牌
-      this._updateHandCards();
-      
-      // 更新回合信息
-      const turnInfoEl = document.getElementById('turn-info');
-      if (turnInfoEl) {
-        turnInfoEl.textContent = battle.isPlayerTurn ? '你的回合' : '敵人回合';
-        turnInfoEl.className = battle.isPlayerTurn ? 'player-turn' : 'enemy-turn';
+  }
+  
+  /**
+   * 隱藏所有屏幕
+   */
+  _hideAllScreens() {
+    Object.values(this.screens).forEach(screen => {
+      if (screen) {
+        screen.classList.add('hidden');
       }
-      
-      // 更新效果區域
-      this._updateEffectsArea();
-      
-      // 更新牌庫和棄牌堆信息
-      const deckCountEl = document.getElementById('deck-count');
-      const discardCountEl = document.getElementById('discard-count');
-      if (deckCountEl) deckCountEl.textContent = `牌庫: ${cards.deck.length}`;
-      if (discardCountEl) discardCountEl.textContent = `棄牌堆: ${cards.discardPile.length}`;
+    });
+  }
+  
+  /**
+   * 初始化主菜單
+   */
+  _initMainMenu() {
+    const mainMenu = this.screens.mainMenu;
+    if (!mainMenu) return;
+    
+    // 清空現有內容
+    mainMenu.innerHTML = `
+      <h1>卡牌冒險</h1>
+      <div class="menu-buttons">
+        <button id="new-game-btn">新遊戲</button>
+        <button id="load-game-btn">載入遊戲</button>
+        <button id="settings-btn">設置</button>
+      </div>
+    `;
+    
+    // 添加事件監聽器
+    const newGameBtn = mainMenu.querySelector('#new-game-btn');
+    const loadGameBtn = mainMenu.querySelector('#load-game-btn');
+    const settingsBtn = mainMenu.querySelector('#settings-btn');
+    
+    if (newGameBtn) {
+      newGameBtn.onclick = () => {
+        this.gameController.triggerEvent('newGameClicked');
+      };
     }
     
-    /**
-     * 顯示提示信息
-     */
-    showToast(message, duration = 3000) {
-      const toastEl = document.getElementById('toast');
-      if (!toastEl) return;
-      
-      // 清除之前的計時器
-      if (this.toastTimeout) {
-        clearTimeout(this.toastTimeout);
-      }
-      
-      // 設置消息並顯示
-      const toastMessageEl = document.getElementById('toast-message');
-      if (toastMessageEl) toastMessageEl.textContent = message;
-      
-      toastEl.classList.add('show');
-      
-      // 設置自動隱藏
-      this.toastTimeout = setTimeout(() => {
-        toastEl.classList.remove('show');
-      }, duration);
+    if (loadGameBtn) {
+      loadGameBtn.onclick = () => {
+        this.gameController.triggerEvent('loadGameClicked');
+      };
     }
     
-    /**
-     * 顯示模態框
-     */
-    showModal(title, content, buttons) {
-      const modalEl = document.getElementById('modal');
-      if (!modalEl) return;
-      
-      // 設置標題和內容
-      const modalTitleEl = document.getElementById('modal-title');
-      const modalContentEl = document.getElementById('modal-content');
-      const modalButtonsEl = document.getElementById('modal-buttons');
-      
-      if (modalTitleEl) modalTitleEl.textContent = title;
-      if (modalContentEl) modalContentEl.textContent = content;
-      
-      // 清空並添加按鈕
-      if (modalButtonsEl) {
-        modalButtonsEl.innerHTML = '';
-        
-        buttons.forEach(button => {
-          const buttonEl = document.createElement('button');
-          buttonEl.textContent = button.text;
-          buttonEl.onclick = () => {
-            this.hideModal();
-            if (button.callback) button.callback();
-          };
-          modalButtonsEl.appendChild(buttonEl);
-        });
-      }
-      
-      // 顯示模態框
-      modalEl.style.display = 'flex';
+    if (settingsBtn) {
+      settingsBtn.onclick = () => {
+        this._showSettingsModal();
+      };
     }
+  }
+  
+  /**
+   * 初始化關卡選擇屏幕
+   */
+  _initLevelSelect() {
+    const levelSelect = this.screens.levelSelect;
+    if (!levelSelect) return;
     
-    /**
-     * 隱藏模態框
-     */
-    hideModal() {
-      const modalEl = document.getElementById('modal');
-      if (modalEl) modalEl.style.display = 'none';
-    }
+    // 清空現有內容
+    levelSelect.innerHTML = `
+      <h2>選擇關卡</h2>
+      <div class="levels-grid" id="levels-container"></div>
+      <button class="back-btn" id="back-to-menu-btn">返回主菜單</button>
+    `;
     
-    /**
-     * 創建主菜單屏幕
-     */
-    _createMainMenu() {
-      const mainMenu = document.createElement('div');
-      mainMenu.id = 'main-menu';
-      mainMenu.className = 'screen';
-      mainMenu.style.display = 'none';
-      
-      // 標題
-      const title = document.createElement('h1');
-      title.textContent = '卡牌遊戲';
-      mainMenu.appendChild(title);
-      
-      // 按鈕容器
-      const buttonContainer = document.createElement('div');
-      buttonContainer.className = 'button-container';
-      
-      // 新遊戲按鈕
-      const newGameBtn = document.createElement('button');
-      newGameBtn.textContent = '新遊戲';
-      newGameBtn.onclick = () => this.gameController.triggerEvent('newGameClicked');
-      buttonContainer.appendChild(newGameBtn);
-      
-      // 載入遊戲按鈕
-      const loadGameBtn = document.createElement('button');
-      loadGameBtn.textContent = '載入遊戲';
-      loadGameBtn.onclick = () => this.gameController.triggerEvent('loadGameClicked');
-      buttonContainer.appendChild(loadGameBtn);
-      
-      // 繼續遊戲按鈕
-      const continueBtn = document.createElement('button');
-      continueBtn.textContent = '繼續遊戲';
-      continueBtn.onclick = () => this.gameController.triggerEvent('continueClicked');
-      buttonContainer.appendChild(continueBtn);
-      
-      // 設置按鈕
-      const settingsBtn = document.createElement('button');
-      settingsBtn.textContent = '設置';
-      settingsBtn.onclick = () => this.gameController.triggerEvent('settingsClicked');
-      buttonContainer.appendChild(settingsBtn);
-      
-      mainMenu.appendChild(buttonContainer);
-      
-      // 添加到文檔
-      document.body.appendChild(mainMenu);
-      this.screens.mainMenu = mainMenu;
-    }
+    const levelsContainer = levelSelect.querySelector('#levels-container');
+    const backToMenuBtn = levelSelect.querySelector('#back-to-menu-btn');
     
-    /**
-     * 創建關卡選擇屏幕
-     */
-    _createLevelSelect() {
-      const levelSelect = document.createElement('div');
-      levelSelect.id = 'level-select';
-      levelSelect.className = 'screen';
-      levelSelect.style.display = 'none';
-      
-      // 標題
-      const title = document.createElement('h1');
-      title.textContent = '選擇關卡';
-      levelSelect.appendChild(title);
-      
-      // 關卡容器
-      const levelContainer = document.createElement('div');
-      levelContainer.className = 'level-container';
-      levelSelect.appendChild(levelContainer);
-      
-      // 返回按鈕
-      const backBtn = document.createElement('button');
-      backBtn.textContent = '返回';
-      backBtn.className = 'back-button';
-      backBtn.onclick = () => this.gameController.triggerEvent('backToMenuClicked');
-      levelSelect.appendChild(backBtn);
-      
-      // 添加到文檔
-      document.body.appendChild(levelSelect);
-      this.screens.levelSelect = levelSelect;
-    }
+    // 獲取所有關卡
+    const levels = this.gameController.resourceManager.getLevels();
+    const unlockedLevels = this.gameController.state.progress.unlockedLevels;
     
-    /**
-     * 創建戰鬥屏幕
-     */
-    _createBattleScreen() {
-      const battle = document.createElement('div');
-      battle.id = 'battle';
-      battle.className = 'screen';
-      battle.style.display = 'none';
-      
-      // 敵人區域
-      const enemyArea = document.createElement('div');
-      enemyArea.className = 'enemy-area';
-      
-      const enemyInfo = document.createElement('div');
-      enemyInfo.className = 'enemy-info';
-      
-      const enemyName = document.createElement('div');
-      enemyName.id = 'enemy-name';
-      enemyInfo.appendChild(enemyName);
-      
-      const enemyHealth = document.createElement('div');
-      enemyHealth.id = 'enemy-health';
-      enemyInfo.appendChild(enemyHealth);
-      
-      enemyArea.appendChild(enemyInfo);
-      
-      const enemyImage = document.createElement('div');
-      enemyImage.id = 'enemy-image';
-      enemyArea.appendChild(enemyImage);
-      
-      battle.appendChild(enemyArea);
-      
-      // 戰鬥區域
-      const battleArea = document.createElement('div');
-      battleArea.className = 'battle-area';
-      
-      // 回合信息
-      const turnInfo = document.createElement('div');
-      turnInfo.id = 'turn-info';
-      battleArea.appendChild(turnInfo);
-      
-      // 效果區域
-      const effectsArea = document.createElement('div');
-      effectsArea.id = 'effects-area';
-      battleArea.appendChild(effectsArea);
-      
-      // 牌庫和棄牌堆信息
-      const deckInfo = document.createElement('div');
-      deckInfo.className = 'deck-info';
-      
-      const deckCount = document.createElement('div');
-      deckCount.id = 'deck-count';
-      deckInfo.appendChild(deckCount);
-      
-      const discardCount = document.createElement('div');
-      discardCount.id = 'discard-count';
-      deckInfo.appendChild(discardCount);
-      
-      battleArea.appendChild(deckInfo);
-      
-      // 結束回合按鈕
-      const endTurnBtn = document.createElement('button');
-      endTurnBtn.id = 'end-turn-btn';
-      endTurnBtn.textContent = '結束回合';
-      endTurnBtn.onclick = () => this.gameController.triggerEvent('endTurnClicked');
-      battleArea.appendChild(endTurnBtn);
-      
-      battle.appendChild(battleArea);
-      
-      // 玩家區域
-      const playerArea = document.createElement('div');
-      playerArea.className = 'player-area';
-      
-      // 玩家信息
-      const playerInfo = document.createElement('div');
-      playerInfo.className = 'player-info';
-      
-      const playerHealth = document.createElement('div');
-      playerHealth.id = 'player-health';
-      playerInfo.appendChild(playerHealth);
-      
-      const playerMana = document.createElement('div');
-      playerMana.id = 'player-mana';
-      playerInfo.appendChild(playerMana);
-      
-      playerArea.appendChild(playerInfo);
-      
-      // 手牌區域
-      const handArea = document.createElement('div');
-      handArea.id = 'hand-area';
-      playerArea.appendChild(handArea);
-      
-      battle.appendChild(playerArea);
-      
-      // 添加到文檔
-      document.body.appendChild(battle);
-      this.screens.battle = battle;
-    }
-    
-    /**
-     * 創建遊戲結束屏幕
-     */
-    _createGameOverScreen() {
-      const gameOver = document.createElement('div');
-      gameOver.id = 'game-over';
-      gameOver.className = 'screen';
-      gameOver.style.display = 'none';
-      
-      // 結果標題
-      const resultTitle = document.createElement('h1');
-      resultTitle.id = 'result-title';
-      gameOver.appendChild(resultTitle);
-      
-      // 結果信息
-      const resultInfo = document.createElement('div');
-      resultInfo.id = 'result-info';
-      gameOver.appendChild(resultInfo);
-      
-      // 獎勵區域
-      const rewardsArea = document.createElement('div');
-      rewardsArea.id = 'rewards-area';
-      rewardsArea.style.display = 'none';
-      gameOver.appendChild(rewardsArea);
-      
-      // 按鈕容器
-      const buttonContainer = document.createElement('div');
-      buttonContainer.className = 'button-container';
-      
-      // 重新開始按鈕
-      const restartBtn = document.createElement('button');
-      restartBtn.textContent = '重新開始';
-      restartBtn.onclick = () => this.gameController.triggerEvent('restartClicked');
-      buttonContainer.appendChild(restartBtn);
-      
-      // 返回主菜單按鈕
-      const mainMenuBtn = document.createElement('button');
-      mainMenuBtn.textContent = '返回主菜單';
-      mainMenuBtn.onclick = () => this.gameController.triggerEvent('backToMenuClicked');
-      buttonContainer.appendChild(mainMenuBtn);
-      
-      gameOver.appendChild(buttonContainer);
-      
-      // 添加到文檔
-      document.body.appendChild(gameOver);
-      this.screens.gameOver = gameOver;
-    }
-    
-    /**
-     * 創建提示框
-     */
-    _createToast() {
-      const toast = document.createElement('div');
-      toast.id = 'toast';
-      
-      const toastMessage = document.createElement('div');
-      toastMessage.id = 'toast-message';
-      toast.appendChild(toastMessage);
-      
-      document.body.appendChild(toast);
-    }
-    
-    /**
-     * 創建模態框
-     */
-    _createModal() {
-      const modal = document.createElement('div');
-      modal.id = 'modal';
-      modal.style.display = 'none';
-      
-      const modalContent = document.createElement('div');
-      modalContent.className = 'modal-content';
-      
-      const modalTitle = document.createElement('h2');
-      modalTitle.id = 'modal-title';
-      modalContent.appendChild(modalTitle);
-      
-      const modalBody = document.createElement('div');
-      modalBody.id = 'modal-content';
-      modalContent.appendChild(modalBody);
-      
-      const modalButtons = document.createElement('div');
-      modalButtons.id = 'modal-buttons';
-      modalContent.appendChild(modalButtons);
-      
-      modal.appendChild(modalContent);
-      document.body.appendChild(modal);
-    }
-    
-    /**
-     * 初始化主菜單
-     */
-    _initMainMenu() {
-      // 檢查是否有存檔
-      const hasSave = this.gameController.saveManager.loadGame() !== null;
-      
-      // 獲取繼續遊戲按鈕
-      const continueBtn = document.querySelector('#main-menu button:nth-child(3)');
-      if (continueBtn) {
-        continueBtn.disabled = !hasSave;
-        continueBtn.style.opacity = hasSave ? '1' : '0.5';
-      }
-      
-      // 獲取載入遊戲按鈕
-      const loadGameBtn = document.querySelector('#main-menu button:nth-child(2)');
-      if (loadGameBtn) {
-        loadGameBtn.disabled = !hasSave;
-        loadGameBtn.style.opacity = hasSave ? '1' : '0.5';
-      }
-    }
-    
-    /**
-     * 初始化關卡選擇
-     */
-    _initLevelSelect() {
-      const levelContainer = document.querySelector('#level-select .level-container');
-      if (!levelContainer) return;
-      
-      // 清空關卡容器
-      levelContainer.innerHTML = '';
-      
-      // 獲取已解鎖關卡
-      const unlockedLevels = this.gameController.state.progress.unlockedLevels;
-      
-      // 獲取所有關卡
-      const levels = this.gameController.resourceManager.getLevels();
-      
-      // 創建關卡按鈕
+    // 創建關卡卡片
+    if (levelsContainer && levels) {
       levels.forEach(level => {
         const isUnlocked = unlockedLevels.includes(level.id);
         
-        const levelBtn = document.createElement('div');
-        levelBtn.className = `level-btn ${isUnlocked ? 'unlocked' : 'locked'}`;
+        const levelCard = document.createElement('div');
+        levelCard.className = `level-card ${isUnlocked ? '' : 'locked'}`;
         
-        const levelName = document.createElement('div');
-        levelName.className = 'level-name';
-        levelName.textContent = level.name;
-        levelBtn.appendChild(levelName);
-        
-        const levelDifficulty = document.createElement('div');
-        levelDifficulty.className = 'level-difficulty';
-        levelDifficulty.textContent = `難度: ${level.difficulty}`;
-        levelBtn.appendChild(levelDifficulty);
+        levelCard.innerHTML = `
+          <h3>${level.name}</h3>
+          <p>${level.description}</p>
+          <p>${isUnlocked ? '點擊開始' : '未解鎖'}</p>
+        `;
         
         if (isUnlocked) {
-          levelBtn.onclick = () => this.gameController.triggerEvent('levelSelected', level.id);
-        } else {
-          const lockIcon = document.createElement('div');
-          lockIcon.className = 'lock-icon';
-          levelBtn.appendChild(lockIcon);
+          levelCard.onclick = () => {
+            this.gameController.triggerEvent('levelSelected', level.id);
+          };
         }
         
-        levelContainer.appendChild(levelBtn);
+        levelsContainer.appendChild(levelCard);
       });
     }
     
-    /**
-     * 初始化戰鬥屏幕
-     */
-    _initBattleScreen() {
-      // 更新敵人圖像
-      const enemyImage = document.getElementById('enemy-image');
-      if (enemyImage) {
-        enemyImage.style.backgroundImage = `url(${this.gameController.state.enemy.image})`;
-      }
+    // 添加返回按鈕事件
+    if (backToMenuBtn) {
+      backToMenuBtn.onclick = () => {
+        this.gameController.triggerEvent('backToMenuClicked');
+      };
+    }
+  }
+  
+  /**
+   * 初始化戰鬥屏幕
+   */
+  _initBattleScreen() {
+    const battle = this.screens.battle;
+    if (!battle) return;
+    
+    // 清空現有內容
+    battle.innerHTML = `
+      <div id="enemy-area">
+        <div class="enemy-info">
+          <div class="enemy-name"></div>
+          <div class="health-bar">
+            <div class="health-fill"></div>
+            <span class="health-text"></span>
+          </div>
+          <div class="effects-container enemy-effects"></div>
+        </div>
+        <div class="enemy-image-container">
+          <img class="enemy-image" src="" alt="敵人">
+        </div>
+      </div>
       
-      // 清空手牌區域
-      const handArea = document.getElementById('hand-area');
-      if (handArea) {
-        handArea.innerHTML = '';
-      }
+      <div id="battle-area">
+        <div class="battle-message"></div>
+        <div class="cards-container"></div>
+        <button id="end-turn-btn">結束回合</button>
+      </div>
       
-      // 清空效果區域
-      const effectsArea = document.getElementById('effects-area');
-      if (effectsArea) {
-        effectsArea.innerHTML = '';
-      }
-      
-      // 更新UI
-      this.updateBattleUI();
+      <div id="player-area">
+        <div class="player-info">
+          <div class="player-name">冒險者</div>
+          <div class="health-bar">
+            <div class="health-fill"></div>
+            <span class="health-text"></span>
+          </div>
+          <div class="mana-bar">
+            <div class="mana-fill"></div>
+            <span class="mana-text"></span>
+          </div>
+          <div class="effects-container player-effects"></div>
+        </div>
+        <div class="deck-info">
+          <div class="deck-count">牌庫: <span class="deck-count-value">0</span></div>
+          <div class="discard-count">棄牌堆: <span class="discard-count-value">0</span></div>
+        </div>
+      </div>
+    `;
+    
+    // 添加結束回合按鈕事件
+    const endTurnBtn = battle.querySelector('#end-turn-btn');
+    if (endTurnBtn) {
+      endTurnBtn.onclick = () => {
+        this.gameController.triggerEvent('endTurnClicked');
+      };
+    }
+  }
+  
+  /**
+   * 初始化遊戲結束屏幕
+   */
+  _initGameOverScreen() {
+    const gameOver = this.screens.gameOver;
+    if (!gameOver) return;
+    
+    // 清空現有內容
+    gameOver.innerHTML = `
+      <h2 class="result-title"></h2>
+      <div class="result-message"></div>
+      <div class="rewards-container"></div>
+      <div class="menu-buttons">
+        <button id="continue-btn">繼續</button>
+        <button id="back-to-menu-btn-game-over">返回主菜單</button>
+      </div>
+    `;
+    
+    // 添加按鈕事件
+    const continueBtn = gameOver.querySelector('#continue-btn');
+    const backToMenuBtn = gameOver.querySelector('#back-to-menu-btn-game-over');
+    
+    if (continueBtn) {
+      continueBtn.onclick = () => {
+        this.gameController.triggerEvent('continueClicked');
+      };
     }
     
-    /**
-     * 初始化遊戲結束屏幕
-     */
-    _initGameOverScreen() {
-      const { battle } = this.gameController.state;
-      
-      // 設置結果標題
-      const resultTitle = document.getElementById('result-title');
-      if (resultTitle) {
-        resultTitle.textContent = battle.isVictory ? '勝利！' : '失敗';
-        resultTitle.className = battle.isVictory ? 'victory' : 'defeat';
+    if (backToMenuBtn) {
+      backToMenuBtn.onclick = () => {
+        this.gameController.triggerEvent('backToMenuClicked');
+      };
+    }
+  }
+  
+  /**
+   * 更新遊戲結束屏幕
+   */
+  _updateGameOverScreen() {
+    const gameOver = this.screens.gameOver;
+    if (!gameOver) return;
+    
+    const isVictory = this.gameController.state.battle.isVictory;
+    const resultTitle = gameOver.querySelector('.result-title');
+    const resultMessage = gameOver.querySelector('.result-message');
+    const rewardsContainer = gameOver.querySelector('.rewards-container');
+    
+    if (resultTitle) {
+      resultTitle.textContent = isVictory ? '勝利！' : '失敗';
+      resultTitle.style.color = isVictory ? '#4ae94a' : '#e94a4a';
+    }
+    
+    if (resultMessage) {
+      if (isVictory) {
+        resultMessage.textContent = '恭喜你戰勝了敵人！';
+      } else {
+        resultMessage.textContent = '你被敵人擊敗了，再接再厲！';
       }
+    }
+    
+    // 顯示獎勵（僅在勝利時）
+    if (rewardsContainer) {
+      rewardsContainer.innerHTML = '';
       
-      // 設置結果信息
-      const resultInfo = document.getElementById('result-info');
-      if (resultInfo) {
-        if (battle.isVictory) {
-          // 獲取關卡信息
-          const level = this.gameController.resourceManager.getLevelByEnemyId(this.gameController.state.enemy.id);
-          if (level) {
-            resultInfo.innerHTML = `
-              <p>你擊敗了 ${this.gameController.state.enemy.name}！</p>
-              <p>獲得 ${level.rewards.gold} 金幣</p>
-              <p>獲得 ${level.rewards.experience} 經驗值</p>
-            `;
-            
-            // 顯示獎勵區域
-            const rewardsArea = document.getElementById('rewards-area');
-            if (rewardsArea && level.rewards.cards && level.rewards.cards.length > 0) {
-              rewardsArea.style.display = 'block';
-              rewardsArea.innerHTML = '<h2>獲得卡牌</h2>';
-              
-              const cardContainer = document.createElement('div');
-              cardContainer.className = 'card-container';
-              
-              level.rewards.cards.forEach(cardId => {
-                const card = this.gameController.resourceManager.getCardById(cardId);
-                if (card) {
-                  const cardEl = this._createCardElement(card);
-                  cardContainer.appendChild(cardEl);
-                }
-              });
-              
-              rewardsArea.appendChild(cardContainer);
+      if (isVictory) {
+        const level = this.gameController.resourceManager.getLevelByEnemyId(this.gameController.state.enemy.id);
+        if (level) {
+          rewardsContainer.innerHTML = `
+            <h3>獲得獎勵</h3>
+            <div class="reward-item">金幣: ${level.rewards.gold}</div>
+            <div class="reward-item">經驗: ${level.rewards.experience}</div>
+          `;
+          
+          // 如果有卡牌獎勵
+          if (level.rewards.cards && level.rewards.cards.length > 0) {
+            const cardId = level.rewards.cards[0];
+            const card = this.gameController.resourceManager.getCardById(cardId);
+            if (card) {
+              const cardElement = document.createElement('div');
+              cardElement.className = 'card reward-card';
+              cardElement.innerHTML = `
+                <div class="card-name">${card.name}</div>
+                <div class="card-cost">${card.manaCost}</div>
+                <div class="card-description">${card.description}</div>
+                <div class="card-type">${this._getCardTypeText(card.type)}</div>
+              `;
+              rewardsContainer.appendChild(cardElement);
             }
-          } else {
-            resultInfo.textContent = '你獲得了勝利！';
           }
-        } else {
-          resultInfo.textContent = '你被擊敗了，再接再厲！';
         }
-      }
-    }
-    
-    /**
-     * 更新手牌
-     */
-    _updateHandCards() {
-      const handArea = document.getElementById('hand-area');
-      if (!handArea) return;
-      
-      // 清空手牌區域
-      handArea.innerHTML = '';
-      
-      // 添加卡牌
-      this.gameController.state.cards.hand.forEach((card, index) => {
-        const cardEl = this._createCardElement(card);
-        
-        // 添加點擊事件
-        cardEl.onclick = () => {
-          if (this.gameController.state.battle.isPlayerTurn && !this.gameController.state.battle.isGameOver) {
-            this.gameController.triggerEvent('cardClicked', index);
-          }
-        };
-        
-        // 如果魔力不足，禁用卡牌
-        if (card.manaCost > this.gameController.state.player.mana) {
-          cardEl.classList.add('disabled');
-        }
-        
-        handArea.appendChild(cardEl);
-      });
-    }
-    
-    /**
-     * 更新效果區域
-     */
-    _updateEffectsArea() {
-      const effectsArea = document.getElementById('effects-area');
-      if (!effectsArea) return;
-      
-      // 清空效果區域
-      effectsArea.innerHTML = '';
-      
-      // 添加效果
-      this.gameController.state.battle.activeEffects.forEach(effect => {
-        const effectEl = document.createElement('div');
-        effectEl.className = `effect ${effect.type}`;
-        
-        const effectIcon = document.createElement('div');
-        effectIcon.className = 'effect-icon';
-        effectEl.appendChild(effectIcon);
-        
-        const effectInfo = document.createElement('div');
-        effectInfo.className = 'effect-info';
-        effectInfo.textContent = `${effect.value} (${effect.duration}回合)`;
-        effectEl.appendChild(effectInfo);
-        
-        // 添加提示信息
-        effectEl.title = this._getEffectDescription(effect);
-        
-        effectsArea.appendChild(effectEl);
-      });
-    }
-    
-    /**
-     * 創建卡牌元素
-     */
-    _createCardElement(card) {
-      const cardEl = document.createElement('div');
-      cardEl.className = `card ${card.type}`;
-      
-      const cardName = document.createElement('div');
-      cardName.className = 'card-name';
-      cardName.textContent = card.name;
-      cardEl.appendChild(cardName);
-      
-      const cardCost = document.createElement('div');
-      cardCost.className = 'card-cost';
-      cardCost.textContent = card.manaCost;
-      cardEl.appendChild(cardCost);
-      
-      const cardImage = document.createElement('div');
-      cardImage.className = 'card-image';
-      cardEl.appendChild(cardImage);
-      
-      const cardDescription = document.createElement('div');
-      cardDescription.className = 'card-description';
-      cardDescription.textContent = card.description || '';
-      cardEl.appendChild(cardDescription);
-      
-      const cardValue = document.createElement('div');
-      cardValue.className = 'card-value';
-      
-      if (card.type === 'attack') {
-        cardValue.textContent = `攻擊: ${card.value}`;
-      } else if (card.type === 'defense') {
-        cardValue.textContent = `防禦: ${card.value}`;
-      }
-      
-      cardEl.appendChild(cardValue);
-      
-      return cardEl;
-    }
-    
-    /**
-     * 獲取效果描述
-     */
-    _getEffectDescription(effect) {
-      switch (effect.type) {
-        case 'shield':
-          return `護盾: 抵擋 ${effect.value} 點傷害`;
-        case 'poison':
-          return `中毒: 每回合受到 ${effect.value} 點傷害`;
-        case 'weakness':
-          return `虛弱: 攻擊力降低 ${effect.value} 點`;
-        case 'strength':
-          return `力量: 攻擊力提高 ${effect.value} 點`;
-        default:
-          return `${effect.type}: ${effect.value}`;
       }
     }
   }
+  
+  /**
+   * 更新戰鬥UI
+   */
+  updateBattleUI() {
+    const battle = this.screens.battle;
+    if (!battle) return;
+    
+    // 更新敵人信息
+    const enemyName = battle.querySelector('.enemy-name');
+    const enemyHealthFill = battle.querySelector('.enemy-info .health-fill');
+    const enemyHealthText = battle.querySelector('.enemy-info .health-text');
+    const enemyImage = battle.querySelector('.enemy-image');
+    const enemyEffects = battle.querySelector('.enemy-effects');
+    
+    if (enemyName) {
+      enemyName.textContent = this.gameController.state.enemy.name;
+    }
+    
+    if (enemyHealthFill && enemyHealthText) {
+      const healthPercent = (this.gameController.state.enemy.health / this.gameController.state.enemy.maxHealth) * 100;
+      enemyHealthFill.style.width = `${healthPercent}%`;
+      enemyHealthText.textContent = `${this.gameController.state.enemy.health}/${this.gameController.state.enemy.maxHealth}`;
+    }
+    
+    if (enemyImage) {
+      enemyImage.src = this.gameController.state.enemy.image;
+    }
+    
+    // 更新玩家信息
+    const playerHealthFill = battle.querySelector('.player-info .health-fill');
+    const playerHealthText = battle.querySelector('.player-info .health-text');
+    const playerManaFill = battle.querySelector('.player-info .mana-fill');
+    const playerManaText = battle.querySelector('.player-info .mana-text');
+    const playerEffects = battle.querySelector('.player-effects');
+    
+    if (playerHealthFill && playerHealthText) {
+      const healthPercent = (this.gameController.state.player.health / this.gameController.state.player.maxHealth) * 100;
+      playerHealthFill.style.width = `${healthPercent}%`;
+      playerHealthText.textContent = `${this.gameController.state.player.health}/${this.gameController.state.player.maxHealth}`;
+    }
+    
+    if (playerManaFill && playerManaText) {
+      const manaPercent = (this.gameController.state.player.mana / this.gameController.state.player.maxMana) * 100;
+      playerManaFill.style.width = `${manaPercent}%`;
+      playerManaText.textContent = `${this.gameController.state.player.mana}/${this.gameController.state.player.maxMana}`;
+    }
+    
+    // 更新牌庫信息
+    const deckCountValue = battle.querySelector('.deck-count-value');
+    const discardCountValue = battle.querySelector('.discard-count-value');
+    
+    if (deckCountValue) {
+      deckCountValue.textContent = this.gameController.state.cards.deck.length;
+    }
+    
+    if (discardCountValue) {
+      discardCountValue.textContent = this.gameController.state.cards.discardPile.length;
+    }
+    
+    // 更新手牌
+    this._updateHandCards();
+    
+    // 更新效果
+    this._updateEffects(enemyEffects, 'enemy');
+    this._updateEffects(playerEffects, 'player');
+    
+    // 更新回合按鈕
+    const endTurnBtn = battle.querySelector('#end-turn-btn');
+    if (endTurnBtn) {
+      endTurnBtn.disabled = !this.gameController.state.battle.isPlayerTurn || this.gameController.state.battle.isGameOver;
+    }
+    
+    // 如果遊戲結束，顯示結果消息
+    if (this.gameController.state.battle.isGameOver) {
+      const battleMessage = battle.querySelector('.battle-message');
+      if (battleMessage) {
+        battleMessage.textContent = this.gameController.state.battle.isVictory ? '勝利！' : '失敗';
+        battleMessage.style.color = this.gameController.state.battle.isVictory ? '#4ae94a' : '#e94a4a';
+      }
+    }
+  }
+  
+  /**
+   * 更新手牌
+   */
+  _updateHandCards() {
+    const cardsContainer = document.querySelector('.cards-container');
+    if (!cardsContainer) return;
+    
+    // 清空現有卡牌
+    cardsContainer.innerHTML = '';
+    
+    // 添加手牌
+    this.gameController.state.cards.hand.forEach((card, index) => {
+      const cardElement = document.createElement('div');
+      cardElement.className = 'card';
+      
+      // 如果魔力不足，禁用卡牌
+      if (card.manaCost > this.gameController.state.player.mana) {
+        cardElement.classList.add('disabled');
+      }
+      
+      cardElement.innerHTML = `
+        <div class="card-name">${card.name}</div>
+        <div class="card-cost">${card.manaCost}</div>
+        <div class="card-description">${card.description}</div>
+        <div class="card-type">${this._getCardTypeText(card.type)}</div>
+      `;
+      
+      // 添加點擊事件
+      cardElement.onclick = () => {
+        if (!cardElement.classList.contains('disabled') && this.gameController.state.battle.isPlayerTurn) {
+          this.gameController.triggerEvent('cardClicked', index);
+        }
+      };
+      
+      cardsContainer.appendChild(cardElement);
+    });
+  }
+  
+  /**
+   * 更新效果
+   */
+  _updateEffects(container, source) {
+    if (!container) return;
+    
+    // 清空現有效果
+    container.innerHTML = '';
+    
+    // 篩選出對應來源的效果
+    const effects = this.gameController.state.battle.activeEffects.filter(effect => effect.source === source);
+    
+    // 添加效果圖標
+    effects.forEach(effect => {
+      const effectElement = document.createElement('div');
+      effectElement.className = `effect-icon ${effect.type}`;
+      
+      // 添加效果值
+      effectElement.textContent = effect.value;
+      
+      // 添加持續時間
+      if (effect.duration > 0) {
+        const durationElement = document.createElement('div');
+        durationElement.className = 'effect-duration';
+        durationElement.textContent = effect.duration;
+        effectElement.appendChild(durationElement);
+      }
+      
+      container.appendChild(effectElement);
+    });
+  }
+  
+  /**
+   * 獲取卡牌類型文本
+   */
+  _getCardTypeText(type) {
+    switch (type) {
+      case 'attack':
+        return '攻擊';
+      case 'defense':
+        return '防禦';
+      case 'skill':
+        return '技能';
+      case 'item':
+        return '物品';
+      default:
+        return type;
+    }
+  }
+  
+  /**
+   * 顯示設置模態框
+   */
+  _showSettingsModal() {
+    // 創建模態框
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    
+    modal.innerHTML = `
+      <div class="modal-content">
+        <h3>設置</h3>
+        <div class="settings-container">
+          <div class="setting-item">
+            <label for="music-volume">音樂音量</label>
+            <input type="range" id="music-volume" min="0" max="1" step="0.1" value="${this.gameController.state.settings.musicVolume}">
+          </div>
+          <div class="setting-item">
+            <label for="sound-volume">音效音量</label>
+            <input type="range" id="sound-volume" min="0" max="1" step="0.1" value="${this.gameController.state.settings.soundVolume}">
+          </div>
+          <div class="setting-item">
+            <label for="difficulty">難度</label>
+            <select id="difficulty">
+              <option value="easy" ${this.gameController.state.settings.difficulty === 'easy' ? 'selected' : ''}>簡單</option>
+              <option value="normal" ${this.gameController.state.settings.difficulty === 'normal' ? 'selected' : ''}>普通</option>
+              <option value="hard" ${this.gameController.state.settings.difficulty === 'hard' ? 'selected' : ''}>困難</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-buttons">
+          <button id="save-settings-btn">保存</button>
+          <button id="close-modal-btn">取消</button>
+        </div>
+      </div>
+    `;
+    
+    // 添加到頁面
+    document.body.appendChild(modal);
+    
+    // 添加事件監聽器
+    const saveSettingsBtn = modal.querySelector('#save-settings-btn');
+    const closeModalBtn = modal.querySelector('#close-modal-btn');
+    
+    if (saveSettingsBtn) {
+      saveSettingsBtn.onclick = () => {
+        // 獲取設置值
+        const musicVolume = parseFloat(modal.querySelector('#music-volume').value);
+        const soundVolume = parseFloat(modal.querySelector('#sound-volume').value);
+        const difficulty = modal.querySelector('#difficulty').value;
+        
+        // 更新設置
+        this.gameController.state.settings.musicVolume = musicVolume;
+        this.gameController.state.settings.soundVolume = soundVolume;
+        this.gameController.state.settings.difficulty = difficulty;
+        
+        // 應用設置
+        this.gameController.soundManager.setMusicVolume(musicVolume);
+        this.gameController.soundManager.setSoundVolume(soundVolume);
+        
+        // 關閉模態框
+        document.body.removeChild(modal);
+      };
+    }
+    
+    if (closeModalBtn) {
+      closeModalBtn.onclick = () => {
+        // 關閉模態框
+        document.body.removeChild(modal);
+      };
+    }
+  }
+  
+  /**
+   * 顯示提示消息
+   */
+  showToast(message, duration = 3000) {
+    // 清除現有提示
+    if (this.toastTimeout) {
+      clearTimeout(this.toastTimeout);
+      const existingToast = document.querySelector('.toast');
+      if (existingToast) {
+        document.body.removeChild(existingToast);
+      }
+    }
+    
+    // 創建提示元素
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    
+    // 添加到頁面
+    document.body.appendChild(toast);
+    
+    // 設置自動消失
+    this.toastTimeout = setTimeout(() => {
+      document.body.removeChild(toast);
+      this.toastTimeout = null;
+    }, duration);
+  }
+}
