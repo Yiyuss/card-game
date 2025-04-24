@@ -37,41 +37,41 @@ export class SoundManager {
       
       console.log('音效管理器初始化完成');
     }
+
+/**
+ * 預加載音效
+ */
+preloadSounds() {
+  // 預加載常用音效 
+  this._loadSound('card-draw', 'assets/sounds/card-draw.mp3'); 
+  this._loadSound('card-play', 'assets/sounds/card-play.mp3'); 
+  this._loadSound('player-hit', 'assets/sounds/player-hit.mp3'); 
+  this._loadSound('enemy-hit', 'assets/sounds/enemy-hit.mp3'); 
+  this._loadSound('battle-start', 'assets/sounds/battle-start.mp3'); 
+  this._loadSound('turn-start', 'assets/sounds/turn-start.mp3'); 
+  this._loadSound('turn-end', 'assets/sounds/turn-end.mp3'); 
+  this._loadSound('victory', 'assets/sounds/victory.mp3'); 
+  this._loadSound('defeat', 'assets/sounds/defeat.mp3'); 
+  this._loadSound('level-up', 'assets/sounds/level-up.mp3'); 
+  this._loadSound('button-click', 'assets/sounds/button-click.mp3'); 
+  this._loadSound('achievement-unlocked', 'assets/sounds/achievement-unlocked.mp3'); 
   
-    /**
-     * 預加載音效
-     */
-    _preloadSounds() {
-      // 預加載常用音效
-      this._loadSound('card-draw', 'assets/sounds/card-draw.mp3');
-      this._loadSound('card-play', 'assets/sounds/card-play.mp3');
-      this._loadSound('player-hit', 'assets/sounds/player-hit.mp3');
-      this._loadSound('enemy-hit', 'assets/sounds/enemy-hit.mp3');
-      this._loadSound('battle-start', 'assets/sounds/battle-start.mp3');
-      this._loadSound('turn-start', 'assets/sounds/turn-start.mp3');
-      this._loadSound('turn-end', 'assets/sounds/turn-end.mp3');
-      this._loadSound('victory', 'assets/sounds/victory.mp3');
-      this._loadSound('defeat', 'assets/sounds/defeat.mp3');
-      this._loadSound('level-up', 'assets/sounds/level-up.mp3');
-      this._loadSound('button-click', 'assets/sounds/button-click.mp3');
-      this._loadSound('achievement-unlocked', 'assets/sounds/achievement-unlocked.mp3');
-      
-      // 預加載效果音效
-      this._loadSound('poison', 'assets/sounds/poison.mp3');
-      this._loadSound('burn', 'assets/sounds/burn.mp3');
-      this._loadSound('shield', 'assets/sounds/shield.mp3');
-      this._loadSound('buff', 'assets/sounds/buff.mp3');
-      this._loadSound('debuff', 'assets/sounds/debuff.mp3');
-      this._loadSound('heal', 'assets/sounds/heal.mp3');
-      this._loadSound('stun', 'assets/sounds/stun.mp3');
-      this._loadSound('effect', 'assets/sounds/effect.mp3');
-      
-      // 預加載背景音樂
-      this._loadSound('menu', 'assets/music/menu.mp3');
-      this._loadSound('battle', 'assets/music/battle.mp3');
-      this._loadSound('victory', 'assets/music/victory.mp3');
-      this._loadSound('defeat', 'assets/music/defeat.mp3');
-    }
+  // 預加載效果音效 
+  this._loadSound('poison', 'assets/sounds/poison.mp3'); 
+  this._loadSound('burn', 'assets/sounds/burn.mp3'); 
+  this._loadSound('shield', 'assets/sounds/shield.mp3'); 
+  this._loadSound('buff', 'assets/sounds/buff.mp3'); 
+  this._loadSound('debuff', 'assets/sounds/debuff.mp3'); 
+  this._loadSound('heal', 'assets/sounds/heal.mp3'); 
+  this._loadSound('stun', 'assets/sounds/stun.mp3'); 
+  this._loadSound('effect', 'assets/sounds/effect.mp3'); 
+  
+  // 預加載背景音樂 
+  this._loadSound('menu', 'assets/music/menu.mp3'); 
+  this._loadSound('battle', 'assets/music/battle.mp3'); 
+  this._loadSound('victory', 'assets/music/victory.mp3'); 
+  this._loadSound('defeat', 'assets/music/defeat.mp3'); 
+}
   
     /**
      * 加載音效
