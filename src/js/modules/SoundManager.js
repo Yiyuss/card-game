@@ -67,10 +67,10 @@ export class SoundManager {
       this._loadSound('effect', 'assets/sounds/effect.mp3');
       
       // 預加載背景音樂
-      this._loadSound('bgm-menu', 'assets/music/menu.mp3');
-      this._loadSound('bgm-battle', 'assets/music/battle.mp3');
-      this._loadSound('bgm-victory', 'assets/music/victory.mp3');
-      this._loadSound('bgm-defeat', 'assets/music/defeat.mp3');
+      this._loadSound('menu', 'assets/music/menu.mp3');
+      this._loadSound('battle', 'assets/music/battle.mp3');
+      this._loadSound('victory', 'assets/music/victory.mp3');
+      this._loadSound('defeat', 'assets/music/defeat.mp3');
     }
   
     /**
